@@ -2,12 +2,12 @@ from peewee import *
 
 db = SqliteDatabase('jugglers.sqlite')
 
-class Juggler(Model):
+class Juggler(Model): # Juggler model to make Juggler Object
     name = CharField()
     country = CharField()
     catches = IntegerField()
 
-    class Meta:
+    class Meta: # Link model class to db.
         database = db
 
     def __str__(self):
@@ -16,8 +16,8 @@ class Juggler(Model):
 db.connect()
 db.create_tables([Juggler])
 
-Juggler.delete().execute()
-# Example data
+Juggler.delete().execute() # Clear db table at the beginning of program.
+# Example data inserted into db.
 janne_mustonen = Juggler(name = 'Jane Mustonen', country = 'FINLAND', catches = 98)
 janne_mustonen.save()
 
@@ -54,7 +54,7 @@ def main():
             print('\nPlease enter a numeric choice.\n')
 
 
-def display_menu():
+def display_menu(): # Menu option for user
     print('1: Add new record')
     print('2: Search record')
     print('3: Update record')
@@ -62,19 +62,19 @@ def display_menu():
     print('5: Display record')
     print('6: Exit')
 
-def add():
+def add(): # Insert data from user into db.
     add_name = input('Enter juggler name: ').title()
     add_country = input('Enter country: ').upper()
     add_catches = int(input('Enter number of catches: '))
-
+    
     add_to_record = Juggler(name = add_name, country = add_country, catches = add_catches)
     add_to_record.save()
-    
 
-def search():
+
+def search(): # Searching for record by name.
     search_name = input('Enter full name to search: ').title()
     search_record = Juggler.select().where(Juggler.name == search_name).execute()
-
+    # If name searched is found then display else print a message to user.
     for record in search_record:
         print(f'Record found - {record}.')
         break
@@ -83,10 +83,10 @@ def search():
         print(f'No record found under name: {search_name}')
 
 
-def update():
+def update(): # Updating record db by name then updating catches.
     update_by_name = input('Enter juggler name to update record: ').title()
     update_catches = int(input('Enter number of new catches: '))
-
+    # If juggler is found in db then updates else print message to user.
     rows_updated = Juggler.update(catches = update_catches).where(Juggler.name == update_by_name).execute()
     if rows_updated == 0:
         print(f'No record was found under name: {update_by_name}.')
@@ -94,9 +94,9 @@ def update():
         print(f'Record under name {update_by_name} has been updated to {update_catches}.')
 
 
-def delete():
+def delete(): # Delete juggler by name. 
     delete_name = input('Enter juggler full name to delete from record: ').title()
-
+    # Search by name, if not found send user message else delete from db.
     rows_deleted = Juggler.delete().where(Juggler.name == delete_name).execute()
     if rows_deleted == 0:
         print(f'No record deleted under name: {delete_name}.')
@@ -104,7 +104,7 @@ def delete():
         print(f'Record under name {delete_name} has been deleted.')
 
 
-def display_all_jugglers():
+def display_all_jugglers(): # Displaying all jugglers.
     print('Records of all jugglers:')
     all_jugglers = Juggler.select()
     for juggler in all_jugglers:
